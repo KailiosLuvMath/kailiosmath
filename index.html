@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kailios Math Library 📐</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <nav class="navbar glass">
+        <div class="logo">📐 Kailios MathWiki</div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Tìm công thức, bài tập... 🔍">
+        </div>
+        <div class="nav-links">
+      <button id="themeBtn">🌙</button>
+      <button onclick="adminLogin()" class="btn-admin">🔓 Admin</button>
+      <button onclick="adminLogout()" style="background:none; border:none; cursor:pointer;">🚪</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar glass">
+            <h3>📂 Danh mục Toán</h3>
+            <ul id="dynamicPostList">
+                <li><a href="#dai-so">🧮 Đại số</a></li>
+                <li><a href="#hinh-hoc">📏 Hình học</a></li>
+                <li><a href="#giai-tich">📈 Giải tích</a></li>
+                <li><a href="#xac-suat">🎲 Xác suất</a></li>
+            </ul>
+            
+            <hr style="margin: 20px 0; border: 0.5px solid rgba(255,255,255,0.3);">
+            
+            <div id="adminPanel" class="hidden">
+                <h4 style="margin-bottom: 10px;">🛠 Công cụ của Đức Anh</h4>
+                <button onclick="showEditor()" class="btn-primary" style="width: 100%;">➕ Tạo bài viết mới</button>
+            </div>
+        </aside>
+
+        <main class="main-content glass">
+            <article id="contentArea">
+                <nav class="breadcrumb">Trang chủ / Giải tích / Đạo hàm</nav>
+                <h1>Định nghĩa Đạo hàm 📈</h1>
+                <p class="author">Người viết: <b>Kailios - Đức Anh</b></p>
+                <div class="article-body">
+                    <p>Chào mừng bạn đến với thư viện toán học của Đức Anh! Chọn một bài viết bên trái để xem chi tiết.</p>
+                </div>
+            </article>
+
+            <section id="editorArea" class="hidden">
+                <h2>Tạo bài giảng Toán mới ✍️</h2>
+                
+                <div class="form-group">
+                    <label>Tiêu đề bài viết:</label>
+                    <input type="text" id="postTitle" placeholder="Ví dụ: Định lý Pitago">
+                </div>
+
+                <div class="form-group">
+                    <label>Chuyên mục:</label>
+                    <select id="postCategory">
+                        <option value="daiso">Đại số</option>
+                        <option value="hinhhoc">Hình học</option>
+                        <option value="giaitich">Giải tích</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung (hỗ trợ LaTeX):</label>
+                    <textarea id="postText" rows="10" placeholder="Nhập nội dung... Dùng $ công thức $ để viết toán."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Đính kèm tài liệu (PDF/Ảnh):</label>
+                    <input type="file" id="fileUpload">
+                </div>
+
+                <button class="btn-confirm" onclick="savePost()">Xuất bản bài báo ✅</button>
+            </section>
+        </main>
+
+        <aside class="infobox glass">
+            <h4>💡 Thông tin nhanh</h4>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Derivative_curves.svg/300px-Derivative_curves.svg.png" alt="Math" style="width:100%; border-radius: 10px; margin: 10px 0;">
+            <p><b>Chủ đề:</b> Toán học phổ thông</p>
+            <p><b>Người quản trị:</b> Đức Anh</p>
+            <p><b>Cập nhật:</b> 2025</p>
+        </aside>
+    </div>
+
+    <script src="script.js"></script><script src="upload.js"></script>
+    <script src="search.js"></script>
+    <script src="darkmode.js"></script>
+
+    <div id="toast-container"></div>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+/* 1. Nền tổng thể: Gradient màu pastel dịu mắt */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 50%, #f3e5f5 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* 2. Công thức Glassmorphism: Kính mờ */
+.glass {
+    background: rgba(255, 255, 255, 0.6); /* Trong suốt 60% */
+    backdrop-filter: blur(12px); /* Làm mờ hậu cảnh */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Viền kính sáng */
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+}
+
+/* 3. Bố cục Container */
+.container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* 4. Sidebar nghệ thuật */
+.sidebar {
+    width: 280px;
+    padding: 20px;
+}
+
+.sidebar-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    transition: 0.3s;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(8px); /* Nhích nhẹ sang phải */
+}
+
+/* 5. Nút Xóa nhỏ xinh */
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.5;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    transform: scale(1.3);
+}
+
+/* 6. Nội dung chính (Bài viết) */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    min-height: 80vh;
+}
+
+/* Hiệu ứng hiện bài viết từ từ */
+#contentArea {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Lệnh để ẩn bất kỳ cái gì có class là hidden */
+.hidden {
+    display: none !important;
+}
+
+/* Sửa lỗi các ô nhập liệu bị dính nhau và bị nhỏ */
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    box-sizing: border-box; /* Giúp không bị tràn khung */
+}
+
+
+
+/* Làm đẹp nội dung bài viết */
+.article-body {
+    line-height: 1.6; /* Khoảng cách dòng cho dễ đọc */
+    font-size: 1.1rem;
+}
+
+.article-body h3 {
+    color: #007bff;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+    margin-top: 25px;
+}
+
+/* Biến các khối công thức thành hộp chuyên nghiệp */
+.math-box {
+    background: rgba(0, 123, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+    border: 1px dashed #007bff;
+}
+
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999; /* Số này phải thật lớn để nó đè lên trên mọi thứ khác */
+}
+
+.toast {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    border-radius: 10px;
+    border-left: 5px solid #007bff; /* Vạch màu xanh cho đẹp */
+    margin-bottom: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: slideIn 0.5s ease forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 16px;
+    filter: grayscale(1);
+    transition: 0.2s;
+}
+.edit-btn:hover {
+    filter: grayscale(0);
+    transform: scale(1.2);
+}
