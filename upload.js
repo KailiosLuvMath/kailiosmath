@@ -24,8 +24,6 @@ async function savePost() {
         formData.append('document', fileInput.files[0]);
     }
 
-    // LOGIC THAY ĐỔI Ở ĐÂY:
-    // Nếu có currentEditingId thì gọi API PUT (sửa), ngược lại gọi POST (mới)
     const url = currentEditingId ? `/api/posts/${currentEditingId}` : '/api/upload';
     const method = currentEditingId ? 'PUT' : 'POST';
 
@@ -41,19 +39,17 @@ async function savePost() {
         if (result.status === "success") {
             showToast(currentEditingId ? "Đã cập nhật bài viết thành công! ✨" : "Đã xuất bản bài mới! 🚀");
             
-            // Hiển thị nội dung
             const articleArea = document.getElementById('contentArea');
             articleArea.innerHTML = `
                 <nav class="breadcrumb">Trang chủ / ${currentEditingId ? 'Vừa chỉnh sửa' : 'Mới đăng'}</nav>
                 <h1>${result.data.title} 📐</h1>
                 <p><i>Cập nhật lúc: ${result.data.uploadTime || 'Vừa xong'}</i></p>
                 <div class="article-body">${result.data.content.replace(/\n/g, '<br>')}</div>
-                ${result.data.fileName ? `<p>📂 Tài liệu: <a href="/uploads/${result.data.fileName}" target="_blank">Xem file</a></p>` : ''}
+                ${result.data.fileName ? `<p>📂 Tài liệu: <a href="${result.data.fileName}" target="_blank">Xem file trên Cloud ☁️</a></p>` : ''}
             `;
             
             if (window.MathJax) MathJax.typeset();
             
-            // RESET TRẠNG THÁI: Quan trọng để lần sau đăng bài mới không bị dính bài cũ
             currentEditingId = null;
             document.getElementById('postTitle').value = "";
             document.getElementById('postText').value = "";
@@ -68,7 +64,7 @@ async function savePost() {
     }
 }
 
-// 2. Hàm vẽ Sidebar (Thêm nút Sửa ✏️)
+// 2. Hàm vẽ Sidebar (Giữ nguyên)
 async function renderSidebar(filterText = "") {
     try {
         const response = await fetch('/api/posts');
@@ -100,23 +96,20 @@ async function renderSidebar(filterText = "") {
     } catch (e) { console.log("Lỗi tải danh sách bài viết."); }
 }
 
-// 3. Hàm kích hoạt chế độ SỬA
+// 3. Hàm kích hoạt chế độ SỬA (Giữ nguyên)
 function editPost(id) {
     if (localStorage.getItem('isAdmin') !== 'true') return;
 
     const post = window.allStoredPosts.find(p => p.id === id);
     if (!post) return;
 
-    // Đưa dữ liệu vào form
     currentEditingId = id;
     document.getElementById('postTitle').value = post.title;
     document.getElementById('postText').value = post.content;
 
-    // Đổi giao diện nút bấm
     const submitBtn = document.querySelector('#editorArea button[onclick="savePost()"]');
     if (submitBtn) submitBtn.innerHTML = "Lưu thay đổi 💾";
 
-    // Mở khung soạn thảo
     const content = document.getElementById('contentArea');
     const editor = document.getElementById('editorArea');
     content.classList.add('hidden');
@@ -125,7 +118,7 @@ function editPost(id) {
     showToast("Đang sửa bài: " + post.title);
 }
 
-// 4. Các hàm Xóa và Xem bài (Giữ nguyên logic bảo mật của bạn)
+// 4. Các hàm Xóa và Xem bài (Sửa phần hiển thị file)
 async function deletePost(id) {
     if (localStorage.getItem('isAdmin') !== 'true') {
         showToast("Dừng lại! Chỉ Admin mới được xóa. 🛑");
@@ -152,7 +145,7 @@ function viewStoredPost(id) {
             <h1>${post.title} 📐</h1>
             <p><i>Người viết: Kailios - Đức Anh</i></p>
             <div class="article-body">${post.content.replace(/\n/g, '<br>')}</div>
-            ${post.fileName ? `<p>📎 <b>File:</b> <a href="/uploads/${post.fileName}" target="_blank">Mở tài liệu</a></p>` : ''}
+            ${post.fileName ? `<p>📎 <b>File đính kèm:</b> <a href="${post.fileName}" target="_blank">Mở tài liệu (Vĩnh viễn) ☁️</a></p>` : ''}
         `;
         if (window.MathJax) MathJax.typeset();
         window.scrollTo(0, 0);
