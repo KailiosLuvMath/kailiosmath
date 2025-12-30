@@ -6,8 +6,10 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Sửa để Render tự cấp Port
-const DATA_FILE = './posts.json';
+const PORT = process.env.PORT || 3000;
+
+// CHÚ Ý: Trên Render, ta phải lưu file vào thư mục /tmp để có quyền Ghi
+const DATA_FILE = path.join('/tmp', 'posts.json');
 
 // --- CẤU HÌNH CLOUDINARY ---
 cloudinary.config({
@@ -16,7 +18,7 @@ cloudinary.config({
   api_secret: 'NIbtfqdb88MUyPHRvN4ZKCBMKjY'
 });
 
-// Thiết lập lưu trữ trên mây (Cloudinary) thay vì diskStorage
+// Thiết lập lưu trữ trên mây
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -25,71 +27,85 @@ const storage = new CloudinaryStorage({
     allowed_formats: ['jpg', 'png', 'pdf', 'docx', 'txt']
   },
 });
-const upload = multer({ storage: storage });
 
-// Khởi tạo file dữ liệu nếu chưa có
-if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 20 * 1024 * 1024 } // Giới hạn 20MB để tránh treo Server
+});
+
+// Khởi tạo file dữ liệu trong thư mục tạm nếu chưa có
+if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+}
 
 app.use(express.static('./'));
 app.use(express.json());
 
 // API 1: Lấy toàn bộ bài viết
 app.get('/api/posts', (req, res) => {
-    const data = JSON.parse(fs.readFileSync(DATA_FILE));
-    res.json(data);
+    try {
+        const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+        res.json(data);
+    } catch (err) {
+        res.json([]);
+    }
 });
 
-// API 2: Nhận bài viết mới (Lưu lên Cloudinary)
+// API 2: Nhận bài viết mới
 app.post('/api/upload', upload.single('document'), (req, res) => {
     try {
-        const posts = JSON.parse(fs.readFileSync(DATA_FILE));
+        const posts = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
         const newPost = {
             id: Date.now(),
             title: req.body.title,
             content: req.body.content,
             category: req.body.category || 'daiso',
-            // req.file.path lúc này là link URL dạng https://res.cloudinary.com/...
             fileName: req.file ? req.file.path : null, 
             uploadTime: new Date().toLocaleString()
         };
         posts.push(newPost);
         fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
-        res.json({ status: "success", message: "Đã lưu vĩnh viễn lên Cloud! ✅", data: newPost });
+        res.json({ status: "success", message: "Đã lưu lên Cloud! ✅", data: newPost });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Lỗi khi lưu bài!" });
+        console.error("Lỗi Server:", error);
+        res.status(500).json({ status: "error", message: "Lỗi ghi file hoặc Upload!" });
     }
 });
 
-// API 3: Cập nhật bài viết (Tính năng Edit bạn vừa muốn thêm)
+// API 3: Cập nhật bài viết
 app.put('/api/posts/:id', upload.single('document'), (req, res) => {
-    const id = parseInt(req.params.id);
-    let posts = JSON.parse(fs.readFileSync(DATA_FILE));
-    const index = posts.findIndex(p => p.id === id);
+    try {
+        const id = parseInt(req.params.id);
+        let posts = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+        const index = posts.findIndex(p => p.id === id);
 
-    if (index !== -1) {
-        posts[index].title = req.body.title;
-        posts[index].content = req.body.content;
-        if (req.file) {
-            posts[index].fileName = req.file.path;
+        if (index !== -1) {
+            posts[index].title = req.body.title;
+            posts[index].content = req.body.content;
+            if (req.file) {
+                posts[index].fileName = req.file.path;
+            }
+            fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
+            res.json({ status: "success", data: posts[index] });
+        } else {
+            res.status(404).json({ status: "error", message: "Không tìm thấy bài!" });
         }
-        fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
-        res.json({ status: "success", data: posts[index] });
-    } else {
-        res.status(404).json({ status: "error", message: "Không tìm thấy bài!" });
+    } catch (error) {
+        res.status(500).json({ status: "error" });
     }
 });
 
 // API 4: Xóa bài viết
 app.delete('/api/posts/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    let posts = JSON.parse(fs.readFileSync(DATA_FILE));
-    
-    // Lưu ý: Với Cloudinary, việc xóa file vật lý cần API Secret phức tạp hơn.
-    // Tạm thời ta chỉ xóa thông tin trong file JSON để bài viết biến mất khỏi web.
-    posts = posts.filter(p => p.id !== id);
-    fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
-    
-    res.json({ status: "success", message: "Đã xóa bài viết thành công!" });
+    try {
+        const id = parseInt(req.params.id);
+        let posts = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+        posts = posts.filter(p => p.id !== id);
+        fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
+        res.json({ status: "success", message: "Đã xóa bài viết!" });
+    } catch (error) {
+        res.status(500).json({ status: "error" });
+    }
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running: http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server kailiosmath online tại Port: ${PORT}`));
