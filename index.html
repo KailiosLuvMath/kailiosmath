@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kailios Math Library 📐</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
     <script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']] // Cho phép dùng một dấu $ để viết công thức trong dòng
-    }
-  };
-</script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
@@ -23,9 +24,9 @@
             <input type="text" id="searchInput" placeholder="Tìm công thức, bài tập... 🔍">
         </div>
         <div class="nav-links">
-      <button id="themeBtn">🌙</button>
-      <button onclick="adminLogin()" class="btn-admin">🔓 Admin</button>
-      <button onclick="adminLogout()" style="background:none; border:none; cursor:pointer;">🚪</button>
+            <button id="themeBtn">🌙</button>
+            <button onclick="adminLogin()" class="btn-admin">🔓 Admin</button>
+            <button onclick="adminLogout()" style="background:none; border:none; cursor:pointer;">🚪</button>
         </div>
     </nav>
 
@@ -33,11 +34,7 @@
         <aside class="sidebar glass">
             <h3>📂 Danh mục Toán</h3>
             <ul id="dynamicPostList">
-                <li><a href="#dai-so">🧮 Đại số</a></li>
-                <li><a href="#hinh-hoc">📏 Hình học</a></li>
-                <li><a href="#giai-tich">📈 Giải tích</a></li>
-                <li><a href="#xac-suat">🎲 Xác suất</a></li>
-            </ul>
+                </ul>
             
             <hr style="margin: 20px 0; border: 0.5px solid rgba(255,255,255,0.3);">
             
@@ -50,10 +47,10 @@
         <main class="main-content glass">
             <article id="contentArea">
                 <nav class="breadcrumb">Trang chủ / Giải tích / Đạo hàm</nav>
-                <h1>Định nghĩa Đạo hàm 📈</h1>
+                <h1>Chào mừng bạn! 📈</h1>
                 <p class="author">Người viết: <b>Kailios - Đức Anh</b></p>
                 <div class="article-body">
-                    <p>Chào mừng bạn đến với thư viện toán học của Đức Anh! Chọn một bài viết bên trái để xem chi tiết.</p>
+                    <p>Chào mừng bạn đến với thư viện toán học của Đức Anh! Chọn một bài viết bên trái để xem chi tiết hoặc đăng nhập Admin để tạo bài mới.</p>
                 </div>
             </article>
 
@@ -62,7 +59,7 @@
                 
                 <div class="form-group">
                     <label>Tiêu đề bài viết:</label>
-                    <input type="text" id="postTitle" placeholder="Ví dụ: Định lý Pitago">
+                    <input type="text" id="postTitle" placeholder="Ví dụ: Đạo hàm cơ bản">
                 </div>
 
                 <div class="form-group">
@@ -97,11 +94,11 @@
         </aside>
     </div>
 
-    <script src="script.js"></script><script src="upload.js"></script>
+    <script src="script.js"></script>
+    <script src="upload.js"></script>
     <script src="search.js"></script>
     <script src="darkmode.js"></script>
 
     <div id="toast-container"></div>
 </body>
-
 </html>
